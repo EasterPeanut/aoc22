@@ -1,3 +1,8 @@
+desc 'Treehouse'
+task :code8 do
+  ruby 'lib/code8.rb'
+end
+
 desc 'Removal of directories'
 task :code7 do
   ruby 'lib/code7.rb'
