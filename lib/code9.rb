@@ -1,25 +1,7 @@
 File.open('lib/instructions.txt', 'r') do |file_handle|
   $head = [0, 0]
   $tail = [0, 0]
-  $tail_positions = ['00']
-
-  def move_tail(heads_prev_position)
-    # do nothing if:
-    #   head is over tail
-    #   head is adjacent to tail
-    row_diff = ($head[0] - $tail[0]).abs
-    col_diff = ($head[1] - $tail[1]).abs
-
-    return unless row_diff > 1 || col_diff > 1
-
-    # move tail to head's previous position
-    $tail = heads_prev_position
-    add_tail_position(heads_prev_position)
-  end
-
-  def add_tail_position((row_idx, col_idx))
-    $tail_positions << "#{row_idx}#{col_idx}"
-  end
+  $tail_positions = ['0/0']
 
   def move(direction, number_of_steps)
     number_of_steps.times.each do |_step|
@@ -37,7 +19,19 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
         $head = [row_idx, col_idx - 1]
       end
 
-      move_tail(heads_prev_position)
+      # do nothing if:
+      #   head is over tail
+      #   head is adjacent to tail
+      row_diff = ($head[0] - $tail[0]).abs
+      col_diff = ($head[1] - $tail[1]).abs
+
+      # next if row_diff > 1 || col_diff > 1
+      next if [row_diff, col_diff].max <= 1
+
+      # move tail to head's previous position
+      $tail = heads_prev_position
+
+      $tail_positions << "#{$tail[0]}/#{$tail[1]}"
     end
   end
 
