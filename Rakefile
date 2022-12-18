@@ -1,3 +1,8 @@
+desc 'Rope bridge'
+task :code9 do
+  ruby 'lib/code9.rb'
+end
+
 desc 'Treehouse'
 task :code8 do
   ruby 'lib/code8.rb'
