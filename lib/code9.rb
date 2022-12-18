@@ -1,23 +1,7 @@
 File.open('lib/instructions.txt', 'r') do |file_handle|
-  GRID = [
-    '......',
-    '......',
-    '......',
-    '......',
-    'H.....'
-  ]
   $head = [0, 0]
   $tail = [0, 0]
-  $tail_positions = []
-
-  GRID.each_with_index do |row, row_idx|
-    col_idx = row.index('H')
-    next unless col_idx
-
-    $head = [row_idx, col_idx]
-    $tail = $head
-    START = $head
-  end
+  $tail_positions = ['00']
 
   def move_tail(heads_prev_position)
     # do nothing if:
@@ -30,16 +14,15 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
 
     # move tail to head's previous position
     $tail = heads_prev_position
+    add_tail_position(heads_prev_position)
   end
 
-  def add_tail_position
-    row_idx, col_idx = $tail
-    key = "#{row_idx}#{col_idx}"
-    $tail_positions << key
+  def add_tail_position((row_idx, col_idx))
+    $tail_positions << "#{row_idx}#{col_idx}"
   end
 
   def move(direction, number_of_steps)
-    (1..number_of_steps).each do |_step|
+    number_of_steps.times.each do |_step|
       heads_prev_position = $head
       row_idx, col_idx    = $head
 
@@ -55,7 +38,6 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
       end
 
       move_tail(heads_prev_position)
-      add_tail_position
     end
   end
 
@@ -63,5 +45,6 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
     direction, number_of_steps = instruction.strip.split(' ')
     move(direction, number_of_steps.to_i)
   end
+
   pp $tail_positions.uniq.count
 end
