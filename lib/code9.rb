@@ -8,6 +8,7 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
   ]
   $head = [0, 0]
   $tail = [0, 0]
+  $tail_positions = []
 
   GRID.each_with_index do |row, row_idx|
     col_idx = row.index('H')
@@ -31,6 +32,12 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
     $tail = heads_prev_position
   end
 
+  def add_tail_position
+    row_idx, col_idx = $tail
+    key = "#{row_idx}#{col_idx}"
+    $tail_positions << key
+  end
+
   def move(direction, number_of_steps)
     (1..number_of_steps).each do |_step|
       heads_prev_position = $head
@@ -48,6 +55,7 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
       end
 
       move_tail(heads_prev_position)
+      add_tail_position
     end
   end
 
@@ -55,4 +63,5 @@ File.open('lib/instructions.txt', 'r') do |file_handle|
     direction, number_of_steps = instruction.strip.split(' ')
     move(direction, number_of_steps.to_i)
   end
+  pp $tail_positions.uniq.count
 end
