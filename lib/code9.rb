@@ -175,8 +175,28 @@ class Knot
       left: [(position_candidates[:left][0] - @y).abs, (position_candidates[:left][1] - @x).abs]
     }
 
-    key, _diff = diffs.min_by { |_k, v| v[0] + v[1] + (v[0] - v[1]).abs }
-    @y, @x = position_candidates[key]
+    key, diff = diffs.min_by { |_k, v| v[0] + v[1] + (v[0] - v[1]).abs }
+
+    if diff[0] + diff[1] + (diff[0] - diff[1]).abs > 2
+      position_candidates = {
+        upright: [knot.y + 1, knot.x + 1],
+        downright: [knot.y - 1, knot.x + 1],
+        downleft: [knot.y - 1, knot.x - 1],
+        upleft: [knot.y + 1, knot.x - 1]
+      }
+
+      diffs = {
+        upright: [(position_candidates[:upright][0] - @y).abs, (position_candidates[:upright][1] - @x).abs],
+        downright: [(position_candidates[:downright][0] - @y).abs, (position_candidates[:downright][1] - @x).abs],
+        downleft: [(position_candidates[:downleft][0] - @y).abs, (position_candidates[:downleft][1] - @x).abs],
+        upleft: [(position_candidates[:upleft][0] - @y).abs, (position_candidates[:upleft][1] - @x).abs]
+      }
+
+      key, diff = diffs.min_by { |_k, v| v[0] + v[1] + (v[0] - v[1]).abs }
+      @y, @x = position_candidates[key]
+    else
+      @y, @x = position_candidates[key]
+    end
   end
 end
 
