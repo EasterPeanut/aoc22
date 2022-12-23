@@ -87,8 +87,8 @@ class Grid
     end.reverse.to_h
   end
 
-  def find_point_by((x, y))
-    @points[y].find { |p| p.x == x }
+  def update_bg(y, x)
+    @points[y].find { |p| p.x == x }.bg = '#'
   end
 
   def add_rope(rope)
@@ -109,9 +109,10 @@ class Grid
 end
 
 class Rope
-  attr_accessor :knots
+  attr_accessor :knots, :on_grid
 
-  def initialize(length)
+  def initialize(length, grid)
+    @on_grid = grid
     @knots = length.times.map do |i|
       if i == 0
         fg = 'H'
@@ -132,17 +133,20 @@ class Rope
         knot.move(direction)
       end
     end
+
+    @on_grid.update_bg(@knots.last.y, @knots.last.x)
   end
 end
 
 class Knot
-  attr_accessor :y, :x, :fg, :before
+  attr_accessor :y, :x, :fg, :before, :points_visited
 
   def initialize(y:, x:, fg:, before: nil)
     @y = y
     @x = x
     @fg = fg
     @before = before
+    @points_visited = [[0, 0]]
   end
 
   def move(direction)
@@ -156,6 +160,8 @@ class Knot
     when 'L'
       @x -= 1
     end
+
+    @points_visited << [@y, @x]
 
     self
   end
@@ -197,6 +203,8 @@ class Knot
     else
       @y, @x = position_candidates[key]
     end
+
+    @points_visited << [@y, @x]
   end
 end
 
@@ -208,7 +216,7 @@ def part2
   end
 
   $grid = Grid.new($instructions)
-  $rope = Rope.new(10)
+  $rope = Rope.new(10, $grid)
 
   $grid.add_rope($rope)
 
@@ -216,9 +224,10 @@ def part2
     iterations.times do |_i|
       $rope.move(direction)
       $grid.print
-      sleep 0.2
+      sleep 0.1
     end
   end
+  pp $rope.knots.last.points_visited.uniq.count
 end
 
 part2
